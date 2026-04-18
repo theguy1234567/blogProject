@@ -1,13 +1,22 @@
 import connectDB from "../dbconfig/connectdb";
-import getcurruser from "../helper/getcurruser";
 import User from "../models/usermodel";
 
 export default async function createUser(user) {
   try {
     await connectDB();
-    const newUser = await User.create(user);
-    return JSON.parse(JSON.stringify(newUser));
+
+    const newUser = await User.findOneAndUpdate(
+      { clerkId: user.clerkId }, //  unique identifier
+      user,
+      {
+        new: true,
+        upsert: true, //  creates if not exists, updates if exists
+      },
+    );
+
+    return newUser;
   } catch (error) {
-    console.log(error);
+    console.error("Create user error:", error);
+    throw error;
   }
 }

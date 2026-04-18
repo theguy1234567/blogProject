@@ -1,9 +1,7 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { clerkClient, WebhookEvent } from "@clerk/nextjs/server";
-import User from "@/app/models/usermodel.js";
-import { NextResponse } from "next/server";
-import connectDB from "@/app/dbconfig/connectdb";
+
 import createUser from "@/app/actions/user.actions";
 
 export async function POST(req: Request) {
@@ -61,8 +59,9 @@ export async function POST(req: Request) {
 
     const user = {
       clerkId: id,
-      useremail: email_addresses[0] ? email_addresses : " ",
+      useremail: email_addresses[0]?.email_address || "",
       avatar: image_url,
+      username: username,
     };
 
     console.log(user);
