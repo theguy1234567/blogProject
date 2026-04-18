@@ -11,6 +11,7 @@ export default async function createUser(user) {
       {
         new: true,
         upsert: true, //  creates if not exists, updates if exists
+        returnDocument: "after",
       },
     );
 
