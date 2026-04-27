@@ -12,7 +12,7 @@ const isPublicRoute = createRouteMatcher([
   "/feed",
   "/healthcheck",
 ]);
-const isPublicApiRoute = createRouteMatcher(["api/feed", "/api/webhooks(.*)"]);
+const isPublicApiRoute = createRouteMatcher(["/api/feed", "/api/webhooks(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();

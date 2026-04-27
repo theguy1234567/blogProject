@@ -13,6 +13,16 @@ const postschema = new mongoose.Schema(
       enum: ["Blog", "Idea", "diary"],
       index: true,
     },
+    content: {
+      type: String, // store HTML or markdown
+      required: true,
+    },
+    excerpt: {
+      //for preview
+      type: String,
+      maxlength: 200,
+    },
+
     category: {
       type: String,
       default: "Genral",

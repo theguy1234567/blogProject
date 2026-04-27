@@ -52,9 +52,9 @@ export async function POST(req: Request) {
 
   // Do something with the payload
   // For this guide, you simply log the payload to the console
-  const { id } = evt.data;
+
   const eventType = evt.type;
-  if (eventType == "user.created") {
+  if (eventType == "user.created" || eventType === "user.updated") {
     const { id, image_url, username, email_addresses } = evt.data;
 
     const user = {
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
     }
   }
 
-  console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
+  console.log(`Webhook type: ${eventType}`);
   console.log("Webhook body:", body);
 
   return new Response("", { status: 200 });

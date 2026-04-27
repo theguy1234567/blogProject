@@ -1,18 +1,31 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import connectDB from "../dbconfig/connectdb";
-import { NextResponse } from "next/server";
 import User from "../models/usermodel";
-
-//simple function to return the current uuser from clerk
 
 export default async function getcurruser() {
   const { userId } = await auth();
 
-  if (!userId) {
-    return NextResponse.json({ message: "no user found sign in or signup" });
-  }
+  if (!userId) return null;
+
   await connectDB();
 
-  const user = await User.findOne({ clerkId: userId });
+  let user = await User.findOne({ clerkId: userId });
+
+  //  KEY FIX: if webhook hasn't created user yet
+  if (!user) {
+    const clerkUser = await currentUser();
+
+    user = await User.findOneAndUpdate(
+      { clerkId: userId },
+      {
+        clerkId: userId,
+        useremail: clerkUser?.emailAddresses[0]?.emailAddress || "",
+        username: clerkUser?.username || "",
+        avatar: clerkUser?.imageUrl || "",
+      },
+      { upsert: true, new: true },
+    );
+  }
+
   return user;
 }
