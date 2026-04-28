@@ -1,31 +1,60 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
-import connectDB from "../dbconfig/connectdb";
 import User from "../models/usermodel";
 
 export default async function getcurruser() {
-  const { userId } = await auth();
+  try {
+    console.log("🔹 getcurruser: start");
 
-  if (!userId) return null;
+    const { userId } = await auth();
+    console.log("🔹 Clerk userId:", userId);
 
-  await connectDB();
+    if (!userId) {
+      console.log("❌ No userId (not logged in)");
+      return null;
+    }
 
-  let user = await User.findOne({ clerkId: userId });
+    console.log("🔹 Checking DB for user...");
+    let user = await User.findOne({ clerkId: userId });
 
-  //  KEY FIX: if webhook hasn't created user yet
-  if (!user) {
-    const clerkUser = await currentUser();
+    if (user) {
+      console.log("✅ User found in DB");
+      return user;
+    }
+
+    console.log("⚠️ User not found, fetching from Clerk...");
+
+    let clerkUser;
+    try {
+      clerkUser = await currentUser();
+      console.log("🔹 Clerk user fetched");
+    } catch (err) {
+      console.log("❌ Clerk error:", err);
+      return null; // prevents hanging
+    }
+
+    if (!clerkUser) {
+      console.log("❌ Clerk user is null");
+      return null;
+    }
+
+    console.log("🔹 Creating/updating user in DB...");
 
     user = await User.findOneAndUpdate(
       { clerkId: userId },
       {
         clerkId: userId,
-        useremail: clerkUser?.emailAddresses[0]?.emailAddress || "",
-        username: clerkUser?.username || "",
-        avatar: clerkUser?.imageUrl || "",
+        useremail: clerkUser.emailAddresses?.[0]?.emailAddress || "",
+        username: clerkUser.username || "",
+        avatar: clerkUser.imageUrl || "",
       },
       { upsert: true, new: true },
     );
-  }
 
-  return user;
+    console.log("✅ User created/updated in DB");
+
+    return user;
+  } catch (error) {
+    console.log("❌ getcurruser ERROR:", error);
+    return null; // never let it crash your API
+  }
 }
