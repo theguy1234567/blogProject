@@ -126,7 +126,6 @@ postSchema.pre("save", function () {
     this.slug = `${base}-${suffix}`;
   }
 });
-// Delete cached model and re-register fresh
-delete mongoose.models.posts;
-const Post = mongoose.model("posts", postSchema);
+
+const Post = mongoose.models.Post || mongoose.model("Post", postSchema);
 export default Post;

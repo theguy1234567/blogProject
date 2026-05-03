@@ -78,3 +78,14 @@ This project is currently a work in progress. Core features such as authenticati
 ## Vision
 
 To create a platform where users can share ideas and thoughts without distraction, collaborate on meaningful projects, and grow through consistent writing and reflection.
+
+
+Updates:
+  1.improved the mongoose model of Post(name updated from posts to Post)
+  2.added models (like , comment )
+  3.added apis (like , comment,feed)
+
+todo:
+  1.frontend pages for the feed and the home page
+  2.fetch the api/feed
+  3 fix authentication pages 
