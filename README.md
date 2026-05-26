@@ -89,3 +89,4 @@ todo:
   1.frontend pages for the feed and the home page
   2.fetch the api/feed
   3 fix authentication pages 
+  4.fix the validating in the post api 

@@ -34,19 +34,36 @@ export async function POST(req) {
 
     //validations
 
-    if (!title || title.length < 5) {
+    if (!title && !content) {
+      return NextResponse.json(
+        { message: "Title and content Required" },
+        { status: 401},
+      );
+    }
+    // change the validating here if any errors
+    if(title && title.length < 10){
       return NextResponse.json(
         {
           message: "Title must be atleast 5 chars long",
         },
         { status: 400 },
       );
+
+
     }
-    if (!content) {
-      return NextResponse.json({
-        message: "Content is required",
-      });
-    }
+    // if (!title || title.length < 5) {
+    //   return NextResponse.json(
+    //     {
+    //       message: "Title must be atleast 5 chars long",
+    //     },
+    //     { status: 400 },
+    //   );
+    // }
+    // if (!content) {
+    //   return NextResponse.json({
+    //     message: "Content is required",
+    //   });
+    // }
     if (!["Blog", "Idea", "Diary"].includes(type)) {
       return NextResponse.json({ message: "Invalid type" }, { status: 400 });
     }
